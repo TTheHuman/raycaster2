@@ -62,34 +62,6 @@ static inline v2 rotate(v2 v, float a){
     };
 }
 
-static inline v2 segintersection(v2 a0, v2 a1, v2 b0, v2 b1){
-    const float d = ((a0.x - a1.x) * (b0.y - b1.y)) - ((a0.y - a1.y) * (b0.x - b1.x));
-
-    if (fabsf(d) < 0.0000001f){ return(v2){ NAN, NAN }; }
-
-    const float t = ((a0.x - a1.x) * (b0.y - b1.y)) - ((a0.y - a1.y) * (b0.x - b1.x)) / d, u = ((a0.x - a1.x) * (b0.y - b1.y)) - ((a0.y - a1.y) * (b0.x - b1.x)) / d;
-
-        return (t >= 0 && t <= 1 && u >= 0 && u <= 1) ?
-        ((v2) {
-            a0.x + (t * (a1.x - a0.x)),
-            a0.y + (t * (a1.y - a0.y)) })
-        : ((v2) { NAN, NAN });
-}
-
-struct sectors{
-    int id;
-    int index;
-    int wallc;
-    int floor;
-    int celing;
-};
-
-struct walls{
-    v2 x0, y0;
-    v2 x1, y1;
-    int portalsec;
-};
-
 typedef enum {NorthSouth, EastWest} Side;
 typedef struct {
     float x, y;
@@ -115,28 +87,8 @@ ColorRGBA RGBA_Green = {.r = 0x00, .g = 0xFF, .b = 0x00, .a = 0xFF};
 ColorRGBA RGBA_Blue  = {.r = 0x00, .g = 0x00, .b = 0xFF, .a = 0xFF}; 
 ColorRGBA RGBA_Yellow = {.r = 0xFF, .g = 0xFF, .b = 0x00, .a = 0xFF};
 
-double SECTORS[] = { 1, 0, 5, 0.0, 5.0 };
-int WALLS1[] = { 4, 4, 10, 4, 0 };
-int WALLS2[] = { 10, 4, 10, 10, 0 };
-int WALLS3[] = { 10, 10, 7, 14, 2 };
-int WALLS4[] = { 7, 14, 3, 10, 0 };
-int WALLS5[] = { 3, 10, 4, 4, 0 };
-
 int xy2index(int x, int y, int w) {
     return y * w + x;
-}
-
-void map(){
-    struct sectors s1;
-    struct walls w1;
-
-    s1.id = SECTORS[0];
-    s1.index = SECTORS[1];
-    s1.wallc = SECTORS[2];
-    s1.floor = SECTORS[3];
-    s1.celing = SECTORS[4];
-
-    w1.portalsec = WALLS1[4];
 }
 
 void render(State *state, Player* player) {
