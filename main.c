@@ -174,9 +174,6 @@ void render(State *state, Player* player) {
         if (drawEnd >= SCREEN_HEIGHT) drawEnd = SCREEN_HEIGHT;
 
         const uint8_t* keycode = SDL_GetKeyboardState(NULL);
-        // this is the dumbest and most inneficent way to do this
-        // anyone who comes across this code feel free to just fucking kill me
-        // TODO - MAKE THIS GOOD
         if(keycode[SDL_SCANCODE_SPACE]) {
                 drawStart = -lineHeight / 2 + SCREEN_HEIGHT / 2 - pitch + 50;
                 drawEnd = lineHeight / 2 + SCREEN_HEIGHT / 2 - pitch + 50;
