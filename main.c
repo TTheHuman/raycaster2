@@ -16,6 +16,7 @@
 #include <ctype.h>
 
 float pitch;
+_Float16 height;
 
 #define ASSERT(cond, ...)                                                      \
   if (!cond) {                                                                 \
@@ -30,23 +31,29 @@ float pitch;
 #define SCREEN_HEIGHT 720
 
 #define MAP_SIZE 16
-const uint8_t MAP[MAP_SIZE * MAP_SIZE] = {
-	1, 1, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-	1, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-	1, 0, 0, 0, 3, 3, 3, 0, 0, 0, 0, 0, 0, 2, 0, 1,
-	1, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 2, 0, 1, 
-	1, 0, 0, 0, 0, 0, 3, 2, 2, 2, 2, 2, 2, 2, 0, 1,
-	1, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 2, 0, 0, 0, 1,
-	1, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 2, 0, 0, 0, 1,
-	1, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 2, 0, 0, 0, 1,
-	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1,
-	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+
+typedef struct{
+    uint8_t type;
+    float_t height;
+} mapData;
+
+const mapData MAP[MAP_SIZE * MAP_SIZE] = {
+    {1, 1.0f}, {1, 1.0f}, {1, 1.0f}, {4, 5.0f}, {1, 1.0f}, {1, 1.0f}, {1, 1.0f}, {1, 1.0f}, {1, 1.0f}, {1, 1.0f}, {1, 1.0f}, {1, 1.0f}, {1, 1.0f}, {1, 1.0f}, {1, 1.0f}, {1, 1.0f},
+    {1, 1.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {1, 1.0f},
+    {1, 1.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {1, 1.0f},
+    {1, 1.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {1, 1.0f},
+    {1, 1.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {1, 1.0f},
+    {1, 1.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {3, 1.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {1, 1.0f},
+    {1, 1.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {3, 1.0f}, {3, 1.0f}, {3, 1.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {2, 1.0f}, {0, 0.0f}, {1, 1.0f},
+    {1, 1.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {3, 1.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {2, 1.0f}, {0, 0.0f}, {1, 1.0f},
+    {1, 1.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {3, 1.0f}, {2, 1.0f}, {2, 1.0f}, {2, 1.0f}, {2, 1.0f}, {2, 1.0f}, {2, 1.0f}, {2, 1.0f}, {0, 0.0f}, {1, 1.0f},
+    {1, 1.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {3, 1.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {2, 1.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {1, 1.0f},
+    {1, 1.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {3, 1.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {2, 1.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {1, 1.0f},
+    {1, 1.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {3, 1.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {2, 1.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {1, 1.0f},
+    {1, 1.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {2, 1.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {1, 1.0f},
+    {1, 1.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {1, 1.0f},
+    {1, 1.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {0, 0.0f}, {1, 1.0f},
+    {1, 1.0f}, {1, 1.0f}, {1, 1.0f}, {1, 1.0f}, {1, 1.0f}, {1, 1.0f}, {1, 1.0f}, {1, 1.0f}, {1, 1.0f}, {1, 1.0f}, {1, 1.0f}, {1, 1.0f}, {1, 1.0f}, {1, 1.0f}, {1, 1.0f}, {1, 1.0f},
 };
 
 #define PI 3.14159265f
@@ -148,7 +155,7 @@ void render(State *state, Player* player) {
                 side = NorthSouth;
             }
             // check if ray has hit a wall
-            if (MAP[xy2index(mapBox.x, mapBox.y, MAP_SIZE)] > 0) {
+            if (MAP[xy2index(mapBox.x, mapBox.y, MAP_SIZE)].type > 0) {
                 hit = true;
             }
         }
@@ -164,14 +171,20 @@ void render(State *state, Player* player) {
                 break;
         }
 
+        // Calculate block height
+        float blockHeight = MAP[xy2index(mapBox.x, mapBox.y, MAP_SIZE)].height;
+
+        // TODO cutoff wall at floor
         // Calculate height of line to draw on screen 
-        int lineHeight = (int)(SCREEN_HEIGHT / perpWallDist);
+        int lineHeight = (int)(SCREEN_HEIGHT / perpWallDist * blockHeight);
         // calculate lowest and highest pixel to fill in current stripe
         int drawStart = -lineHeight / 2 + SCREEN_HEIGHT / 2 - pitch;
         if (drawStart < 0) drawStart = 0;
         int drawEnd = lineHeight / 2 + SCREEN_HEIGHT / 2 - pitch; 
-        if(MAP[xy2index(mapBox.x, mapBox.y, MAP_SIZE)] > 3){}
         if (drawEnd >= SCREEN_HEIGHT) drawEnd = SCREEN_HEIGHT;
+
+        int y0 = SCREEN_HEIGHT/2 + perpWallDist;
+        int y1 = y0 - 2 * perpWallDist * lineHeight;
 
         const uint8_t* keycode = SDL_GetKeyboardState(NULL);
         if(keycode[SDL_SCANCODE_SPACE]) {
@@ -182,7 +195,7 @@ void render(State *state, Player* player) {
 
         // choose wall color
         ColorRGBA color;
-        switch (MAP[xy2index(mapBox.x, mapBox.y, MAP_SIZE)]) {
+        switch (MAP[xy2index(mapBox.x, mapBox.y, MAP_SIZE)].type) {
             case 1: color = RGBA_Red; break;
             case 2: color = RGBA_Green; break;
             case 3: color = RGBA_Blue; break;
@@ -303,13 +316,13 @@ int main(void) {
             if (MAP[xy2index(
                         player.pos.x + deltaPos.x, 
                         player.pos.y, 
-                        MAP_SIZE)] == 0) {
+                        MAP_SIZE)].type == 0) {
                 player.pos.x += deltaPos.x;
             }
             if (MAP[xy2index(
                         player.pos.x, 
                         player.pos.y + deltaPos.y, 
-                        MAP_SIZE)] == 0) {
+                        MAP_SIZE)].type == 0) {
                 player.pos.y += deltaPos.y;
             }
         }
@@ -318,13 +331,13 @@ int main(void) {
             if (MAP[xy2index(
                         player.pos.x + deltaPos.x, 
                         player.pos.y, 
-                        MAP_SIZE)] == 0) {
+                        MAP_SIZE)].type == 0) {
                 player.pos.x += deltaPos.x;
             }
             if (MAP[xy2index(
                         player.pos.x, 
                         player.pos.y + deltaPos.y, 
-                        MAP_SIZE)] == 0) {
+                        MAP_SIZE)].type == 0) {
                 player.pos.y += deltaPos.y;
             }
         }
@@ -333,13 +346,13 @@ int main(void) {
             if (MAP[xy2index(
                         player.pos.x - deltaPos.x, 
                         player.pos.y, 
-                        MAP_SIZE)] == 0) {
+                        MAP_SIZE)].type == 0) {
                 player.pos.x -= deltaPos.x;
             }
             if (MAP[xy2index(
                         player.pos.x, 
                         player.pos.y - deltaPos.y, 
-                        MAP_SIZE)] == 0) {
+                        MAP_SIZE)].type == 0) {
                 player.pos.y -= deltaPos.y;
             }
 
@@ -349,13 +362,13 @@ int main(void) {
             if (MAP[xy2index(
                         player.pos.x - deltaPos.x, 
                         player.pos.y, 
-                        MAP_SIZE)] == 0) {
+                        MAP_SIZE)].type == 0) {
                 player.pos.x -= deltaPos.x;
             }
             if (MAP[xy2index(
                         player.pos.x, 
                         player.pos.y - deltaPos.y, 
-                        MAP_SIZE)] == 0) {
+                        MAP_SIZE)].type == 0) {
                 player.pos.y -= deltaPos.y;
             }
         }
@@ -363,13 +376,13 @@ int main(void) {
             if (MAP[xy2index(
                         player.pos.x - deltaPos.y, 
                         player.pos.y, 
-                        MAP_SIZE)] == 0) {
+                        MAP_SIZE)].type == 0) {
                 player.pos.x -= deltaPos.y;
             }
             if (MAP[xy2index(
                         player.pos.x, 
                         player.pos.y - -deltaPos.x, 
-                        MAP_SIZE)] == 0) {
+                        MAP_SIZE)].type == 0) {
                 player.pos.y -= -deltaPos.x;
             }
         }
@@ -377,13 +390,13 @@ int main(void) {
             if (MAP[xy2index(
                         player.pos.x - -deltaPos.y, 
                         player.pos.y, 
-                        MAP_SIZE)] == 0) {
+                        MAP_SIZE)].type == 0) {
                 player.pos.x -= -deltaPos.y;
             }
             if (MAP[xy2index(
                         player.pos.x, 
                         player.pos.y - deltaPos.x, 
-                        MAP_SIZE)] == 0) {
+                        MAP_SIZE)].type == 0) {
                 player.pos.y -= deltaPos.x;
             }
         }
